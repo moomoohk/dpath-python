@@ -4,43 +4,10 @@ from dpath import options
 from dpath.exceptions import InvalidKeyName
 import dpath.segments
 
-_DEFAULT_SENTINAL = object()
+
 MERGE_REPLACE = (1 << 1)
 MERGE_ADDITIVE = (1 << 2)
 MERGE_TYPESAFE = (1 << 3)
-
-def __safe_path__(path, separator):
-    '''
-    Given a path and separator, return a tuple of segments. If path is
-    already a non-leaf thing, return it.
-
-    Note that a string path with the separator at index[0] will have the
-    separator stripped off. If you pass a list path, the separator is
-    ignored, and is assumed to be part of each key glob. It will not be
-    stripped.
-    '''
-    if not dpath.segments.leaf(path):
-        segments = path
-    else:
-        segments = path.lstrip(separator).split(separator)
-
-        # FIXME: This check was in the old internal library, but I can't
-        # see a way it could fail...
-        for i, segment in enumerate(segments):
-            if (separator and (separator in segment)):
-                raise InvalidKeyName("{} at {}[{}] contains the separator '{}'"
-                                     "".format(segment, segments, i, separator))
-
-        # Attempt to convert integer segments into actual integers.
-        final = []
-        for segment in segments:
-            try:
-                final.append(int(segment))
-            except:
-                final.append(segment)
-        segments = final
-
-    return segments
 
 
 def new(obj, path, value, separator='/', creator=None):
@@ -143,42 +110,6 @@ def set(obj, glob, value, separator='/', afilter=None):
 
     [changed] = dpath.segments.foldm(obj, f, [0])
     return changed
-
-
-def get(obj, glob, separator='/', default=_DEFAULT_SENTINAL):
-    '''
-    Given an object which contains only one possible match for the given glob,
-    return the value for the leaf matching the given glob.
-    If the glob is not found and a default is provided,
-    the default is returned.
-
-    If more than one leaf matches the glob, ValueError is raised. If the glob is
-    not found and a default is not provided, KeyError is raised.
-    '''
-    if glob == '/':
-        return obj
-
-    globlist = __safe_path__(glob, separator)
-
-    def f(obj, pair, results):
-        (segments, found) = pair
-
-        if dpath.segments.match(segments, globlist):
-            results.append(found)
-        if len(results) > 1:
-            return False
-
-    results = dpath.segments.fold(obj, f, [])
-
-    if len(results) == 0:
-        if default  is not _DEFAULT_SENTINAL:
-            return default
-
-        raise KeyError(glob)
-    elif len(results) > 1:
-        raise ValueError("dpath.util.get() globs must match only one leaf : %s" % glob)
-
-    return results[0]
 
 
 def values(obj, glob, separator='/', afilter=None, dirs=True):
