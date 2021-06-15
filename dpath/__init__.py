@@ -1,6 +1,6 @@
 from typing import Any, Union
 
-from dpath import segments as _segments
+from dpath import segments
 from dpath.exceptions import InvalidKeyName
 
 
@@ -18,28 +18,28 @@ def _split_path(path, separator):
     ignored, and is assumed to be part of each key glob. It will not be
     stripped.
     """
-    if not _segments.leaf(path):
-        segments = path
+    if not segments.leaf(path):
+        split_segments = path
     else:
-        segments = path.lstrip(separator).split(separator)
+        split_segments = path.lstrip(separator).split(separator)
 
         # TODO(moo): Unnecessary check, adds complexity
         # FIXME: This check was in the old internal library, but I can't see a way it could fail...
-        for i, segment in enumerate(segments):
+        for i, segment in enumerate(split_segments):
             if separator and (separator in segment):
-                raise InvalidKeyName("{} at {}[{}] contains the separator '{}'".format(segment, segments, i, separator))
+                raise InvalidKeyName("{} at {}[{}] contains the separator '{}'".format(segment, split_segments, i, separator))
 
         # Attempt to convert integer segments into actual integers.
         final = []
-        for segment in segments:
+        for segment in split_segments:
             try:
                 final.append(int(segment))
             except ValueError:
                 final.append(segment)
 
-        segments = final
+        split_segments = final
 
-    return segments
+    return split_segments
 
 
 def get(obj, glob, separator="/", default=_DEFAULT_SENTINEL):
@@ -62,13 +62,13 @@ def get(obj, glob, separator="/", default=_DEFAULT_SENTINEL):
     def walk(_, pair, _results):
         (path_to_curr, curr) = pair
 
-        if _segments.match(path_to_curr, glob_list):
+        if segments.match(path_to_curr, glob_list):
             _results.append(curr)
 
         if len(_results) > 1:
             return False
 
-    results = _segments.fold(obj, walk, [])
+    results = segments.fold(obj, walk, [])
 
     if len(results) == 0:
         if default is not _DEFAULT_SENTINEL:
@@ -80,3 +80,28 @@ def get(obj, glob, separator="/", default=_DEFAULT_SENTINEL):
         raise ValueError("dpath.get() globs must match only one leaf: {}".format(glob))
 
     return results[0]
+
+
+def set(obj, glob, value, separator="/", afilter=None):
+    '''
+    Given a path glob, set all existing elements in the document
+    to the given value. Returns the number of elements changed.
+    '''
+    globlist = __safe_path__(glob, separator)
+
+    def walk(obj, pair, counter):
+        (segments, found) = pair
+
+        # Skip segments if they no longer exist in obj.
+        if not dpath.segments.has(obj, segments):
+            return
+
+        matched = dpath.segments.match(segments, globlist)
+        selected = afilter and dpath.segments.leaf(found) and afilter(found)
+
+        if (matched and not afilter) or (matched and selected):
+            dpath.segments.set(obj, segments, value, creator=None)
+            counter[0] += 1
+
+    [changed] = segments.foldm(obj, walk, [0])
+    return changed

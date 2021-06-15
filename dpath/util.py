@@ -87,31 +87,6 @@ def delete(obj, glob, separator='/', afilter=None):
     return deleted
 
 
-def set(obj, glob, value, separator='/', afilter=None):
-    '''
-    Given a path glob, set all existing elements in the document
-    to the given value. Returns the number of elements changed.
-    '''
-    globlist = __safe_path__(glob, separator)
-
-    def f(obj, pair, counter):
-        (segments, found) = pair
-
-        # Skip segments if they no longer exist in obj.
-        if not dpath.segments.has(obj, segments):
-            return
-
-        matched = dpath.segments.match(segments, globlist)
-        selected = afilter and dpath.segments.leaf(found) and afilter(found)
-
-        if (matched and not afilter) or (matched and selected):
-            dpath.segments.set(obj, segments, value, creator=None)
-            counter[0] += 1
-
-    [changed] = dpath.segments.foldm(obj, f, [0])
-    return changed
-
-
 def values(obj, glob, separator='/', afilter=None, dirs=True):
     '''
     Given an object and a path glob, return an array of all values which match
