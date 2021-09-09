@@ -4,8 +4,8 @@ name: Deploy and Release
 on:
   # Triggers the workflow on tag push
   push:
-    tags:
-      - "v*"
+    paths:
+      - "dpath/version.py"
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -18,6 +18,22 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+
+#      - name: Read version.py
+#        id: version
+#        uses: juliangruber/read-file-action@v1
+#        with:
+#          path: ./dpath/version.py
+#      - name: Echo version
+#        run: echo "${{ steps.package.outputs.content }}"
+
+      - name: Get version
+        id: get-version
+        run: |
+          python -c "from dpath.version import VERSION; print(f'::set-output name=version::v{VERSION}');"
+
+      - name: Echo version
+        run: echo "${{ steps.get-version.outputs.version }}"
 
       - name: PyPI Deployment
         uses: casperdcl/deploy-pypi@v2
