@@ -39,6 +39,16 @@ jobs:
           version: ${{ steps.get-version.outputs.version }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Changelog
+        id: changelog
+        uses: ardalanamini/auto-changelog@v1.1.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Echo changelog
+        run: |
+          echo ${{ steps.changelog.outputs.changelog }}
+
       - name: PyPI Deployment
         uses: casperdcl/deploy-pypi@v2
         with:
