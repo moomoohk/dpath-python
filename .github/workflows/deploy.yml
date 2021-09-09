@@ -45,10 +45,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-#      - name: Echo changelog
-#        run: |
-#          echo "${{ steps.changelog.outputs.changes }}"
-
       - name: PyPI Deployment
         uses: casperdcl/deploy-pypi@v2
         with:
@@ -66,4 +62,5 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.get-version.outputs.version }}
+          body: ${{ steps.changelog.outputs.changes }}
           files: dist/*
