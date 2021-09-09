@@ -45,9 +45,9 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Echo changelog
-        run: |
-          echo ${{ steps.changelog.outputs.changelog }}
+#      - name: Echo changelog
+#        run: |
+#          echo "${{ steps.changelog.outputs.changes }}"
 
       - name: PyPI Deployment
         uses: casperdcl/deploy-pypi@v2
