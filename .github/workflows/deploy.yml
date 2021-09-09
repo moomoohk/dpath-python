@@ -33,7 +33,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create tag
-        if: !${{ steps.checkTag.outputs.exists }}
+        if: ! steps.check-tag.outputs.exists
         uses: negz/create-tag@v1
         with:
           version: ${{ steps.get-version.outputs.version }}
