@@ -39,13 +39,14 @@ jobs:
         uses: casperdcl/deploy-pypi@v2
         with:
           # PyPI username
-          user: ${{ secrets.PYPI_USER }}
+          user: ${{ secrets.TEST_PYPI_USER }}
           # PyPI password or API token
           password: ${{ secrets.PYPI_PASS }}
           # `setup.py` command to run ("true" is a shortcut for "clean sdist -d <dist_dir> bdist_wheel -d <dist_dir>")
           build: clean sdist -d dist/
           # `pip` command to run ("true" is a shortcut for "wheel -w <dist_dir> --no-deps .")
           pip: true
+          url: https://test.pypi.org/legacy/
           
       - name: Github Release
         uses: softprops/action-gh-release@v1
