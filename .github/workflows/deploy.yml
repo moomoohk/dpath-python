@@ -35,6 +35,13 @@ jobs:
       - name: Echo version
         run: echo "${{ steps.get-version.outputs.version }}"
 
+      - name: Create tag
+        uses: negz/create-tag@v1
+        with:
+          version: ${{ steps.get-version.outputs.version }}
+          message: ""
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: PyPI Deployment
         uses: casperdcl/deploy-pypi@v2
         with:
