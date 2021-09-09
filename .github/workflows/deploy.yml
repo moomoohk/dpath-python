@@ -41,7 +41,7 @@ jobs:
 
       - name: Changelog
         id: changelog
-        uses: ardalanamini/auto-changelog@v1.1.0
+        uses: loopwerk/tag-changelog@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
