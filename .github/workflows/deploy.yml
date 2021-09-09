@@ -2,7 +2,7 @@ name: Deploy and Release
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on tag push
+  # Triggers the workflow on version change
   push:
     paths:
       - "dpath/version.py"
@@ -24,11 +24,17 @@ jobs:
         run: |
           python -c "from dpath.version import VERSION; print(f'::set-output name=version::v{VERSION}');"
 
-      - name: Echo version
-        run: echo "${{ steps.get-version.outputs.version }}"
+      - name: Check tag
+        uses: mukunku/tag-exists-action@v1.0.0
+        id: check-tag
+        with:
+          tag: ${{ steps.get-version.outputs.version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create tag
         uses: negz/create-tag@v1
+        if: ! steps.checkTag.outputs.exists
         with:
           version: ${{ steps.get-version.outputs.version }}
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -37,9 +43,9 @@ jobs:
         uses: casperdcl/deploy-pypi@v2
         with:
           # PyPI username
-          user: ${{ secrets.TEST_PYPI_USER }}
+          user: ${{ secrets.PYPI_USER }}
           # PyPI password or API token
-          password: ${{ secrets.PYPI_PASS }}
+          password: ${{ secrets.TEST_PYPI_PASS }}
           # `setup.py` command to run ("true" is a shortcut for "clean sdist -d <dist_dir> bdist_wheel -d <dist_dir>")
           build: clean sdist -d dist/
           # `pip` command to run ("true" is a shortcut for "wheel -w <dist_dir> --no-deps .")
