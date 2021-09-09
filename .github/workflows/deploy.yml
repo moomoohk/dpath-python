@@ -19,14 +19,6 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-#      - name: Read version.py
-#        id: version
-#        uses: juliangruber/read-file-action@v1
-#        with:
-#          path: ./dpath/version.py
-#      - name: Echo version
-#        run: echo "${{ steps.package.outputs.content }}"
-
       - name: Get version
         id: get-version
         run: |
@@ -39,7 +31,6 @@ jobs:
         uses: negz/create-tag@v1
         with:
           version: ${{ steps.get-version.outputs.version }}
-          message: ""
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: PyPI Deployment
