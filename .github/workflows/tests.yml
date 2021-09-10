@@ -17,8 +17,12 @@ jobs:
   generate-hashseed:
     runs-on: ubuntu-latest
 
+    outputs:
+      hashseed: ${{ steps.generate.outputs.hashseed }}
+
     steps:
       - name: Generate Hashseed
+        id: generate
         run: |
           python -c "from random import randint;
           hashseed = randint(0, 9999999999)
