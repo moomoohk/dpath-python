@@ -22,7 +22,7 @@ jobs:
         run: |
           python -c "from random import randint; |
             hashseed = randint(0, 9999999999); |
-            print(f"{hashseed=}); |
+            print(f'{hashseed=}'); |
             print(f'::set-output name=hashseed::{hashseed}')"
 
       # This workflow contains a single job called "tests"
