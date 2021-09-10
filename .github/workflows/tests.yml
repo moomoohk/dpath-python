@@ -25,7 +25,7 @@ jobs:
         id: generate
         run: |
           python -c "from random import randint;
-          hashseed = randint(0, 9999999999)
+          hashseed = randint(0, 4294967295)
           print(f'{hashseed=}')
           print(f'::set-output name=hashseed::{hashseed}')"
 
