@@ -58,4 +58,4 @@ jobs:
     - name: Run tox with tox-gh-actions
       uses: ymyzk/run-tox-gh-actions@main
       with:
-        tox-args: -vv
+        tox-args: -vv --hashseed=${{ needs.generate-hashseed.outputs.hashseed }}
