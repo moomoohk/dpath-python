@@ -53,9 +53,6 @@ jobs:
     - name: Check out code
       uses: actions/checkout@v2
 
-    - name: Echo Hashseed
-      run: echo ${{ needs.generate-hashseed.outputs.hashseed }}
-
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@main
       with:
