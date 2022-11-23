@@ -101,7 +101,7 @@ def test_types_merge_simple_list_replace():
     })
 
     dpath.util.merge(dst, src, flags=dpath.util.MERGE_REPLACE)
-    nose2.tools.eq_(dst["list"], TestSequence([7, 8, 9, 10]))
+    assert dst["list"] == TestSequence([7, 8, 9, 10]), "%r != %r" % (dst["list"], TestSequence([7, 8, 9, 10]))
 
 
 def test_types_get_absent():
