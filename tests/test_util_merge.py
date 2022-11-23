@@ -2,8 +2,6 @@ import copy
 
 from nose2.tools.such import helper
 
-# from nose.tools import raises
-
 
 import dpath.util
 
