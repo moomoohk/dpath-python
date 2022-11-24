@@ -48,13 +48,13 @@ jobs:
       - name: Set up Python 3.10
         uses: actions/setup-python@main
 
-      - name: Run Flake8
-        uses: julianwachholz/flake8-action@v2
-        with:
-          checkName: flake8
-          path: setup.py,dpath/,tests/
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Setup flake8 annotations
+        uses: rbialon/flake8-annotations@main
+
+      - name: Lint with flake8
+        run: |
+          pip install flake8
+          flake8 setup.py dpath/ tests/
 
   # Tests job
   tests:
