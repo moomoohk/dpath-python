@@ -312,7 +312,6 @@ class TestSegments(TestCase):
         '''
         Given a thing, count paths with fold.
         '''
-
         def f(o, p, a):
             a[0] += 1
 
