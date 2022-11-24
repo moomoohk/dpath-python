@@ -52,7 +52,7 @@ jobs:
         uses: julianwachholz/flake8-action@v2
         with:
           checkName: flake8
-          path: setup.py dpath/ tests/
+          path: setup.py,dpath/,tests/
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
